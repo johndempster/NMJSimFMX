@@ -7,6 +7,6 @@ Note. The SESComponents package of common Delphi components used in Strathclyde 
 To build and run the application:
 
 1) Clone this repository to a folder in the Delphi XE Projects folder e.g. ..\My Documents\Rad Studio\Projects\NMJSimFMX.<br>
-2) Select File->Open Project and open ..\My Documents\Rad Studio\Projects\RatCVS\NMJSim.dpr<br>
+2) Select File->Open Project and open ..\My Documents\Rad Studio\Projects\NMJSimFMX\NMJSim.dpr<br>
 3) Select Project->Build NMJSim<br>
 4) Select Run->Run<br>
