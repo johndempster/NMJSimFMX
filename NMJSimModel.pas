@@ -457,10 +457,10 @@ type
           end ;
 var
    Alpha,Beta : TRate ;
-   dm,dn,dh,dv,mInf,hInf : single ;
+   dm,dn,dh,dv : single ;
    dOpen,dClosed,dDesensitised : single ;
-   nquanta,r,ClosingRate,p,ec50,x : single ;
-   MEPCAverageRate,KVRevNormal : single ;
+   nquanta,r,ClosingRate,p : single ;
+   MEPCAverageRate : single ;
 begin
 
     { Nerve stimulus }
@@ -527,7 +527,7 @@ begin
 //    ---------------------------------------
 
       // MEPCs are released randomly with rate proportional to nerve resting potential(approximated by normal K.VRev) and Ca concentration
-      KVRevNormal := rtf * ln( K.NormalCout / K.Cin ) ;
+//    KVRevNormal := rtf * ln( K.NormalCout / K.Cin ) ;
       MEPCAverageRate := (500.0*Ca.COut)/ ( 1.0 + exp( -(K.VRev - (-0.05))/0.01)) ;
       if (not MEPC.Active) and (Random() <= (dt*MEPCAverageRate)) then
          begin

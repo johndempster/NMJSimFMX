@@ -284,7 +284,7 @@ begin
     Timer.Enabled := True ;
 
     // Find help file
-     HelpFileName := 'epsim.chm' ;
+     HelpFileName := 'nmjsim.chm' ;
      HelpFilePath := ExtractFilePath(ParamStr(0)) + HelpFileName ;
      LocalHelpFilePath := TPath.GetTempPath + HelpFileName ;
 
@@ -580,7 +580,7 @@ procedure TMainFrm.UpdateDisplay ;
 // Update chart display
 // -------------------
 var
-    ch,i : Integer ;
+    i : Integer ;
 begin
 
     // Add latest model variables to display channels
@@ -689,7 +689,6 @@ procedure TMainFrm.TimerTimer(Sender: TObject);
 // ---------------------
 var
     i,StartPoints : Integer ;
-    States : Array[0..20] of Single ;
 begin
 
      if TimerEventRunning then Exit ;
@@ -1254,7 +1253,7 @@ procedure TMainFrm.mnWebHelpClick(Sender: TObject);
 var
   URL: string;
 begin
-  URL := 'https://github.com/johndempster/NerveSimFMX/wiki';
+  URL := 'https://github.com/johndempster/NMJSimFMX/wiki';
 {$IFDEF MSWINDOWS}
   URL := StringReplace(URL, '"', '%22', [rfReplaceAll]);
   ShellExecute(0, 'open', PChar(URL), nil, nil, SW_SHOWNORMAL);
