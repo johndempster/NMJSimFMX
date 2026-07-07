@@ -1,5 +1,5 @@
-# NMJSim
-Rat cardiovascular system simulation 
+# NMJSim - Neuromuscular Junction Simulation
+
 The files contained in this archive can be built using Embarcadero Delphi XE.
 
 Note. The SESComponents package of common Delphi components used in Strathclyde Electrophysiology Software applications must be downloaded from the SESComponentsXE repository and installed on the Delphi XE toolbar before building the NerveSim application. See the SESComponentsXE repository for details.
