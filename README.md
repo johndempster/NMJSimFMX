@@ -2,7 +2,7 @@
 
 The files contained in this archive can be built using Embarcadero Delphi XE.
 
-Note. The SESComponents package of common Delphi components used in Strathclyde Electrophysiology Software applications must be downloaded from the SESComponentsXE repository and installed on the Delphi XE toolbar before building the NerveSim application. See the SESComponentsFMX repository for details.
+Note. The SESComponents package of common Delphi components used in Strathclyde Electrophysiology Software applications must be downloaded from the SESComponentsFMX repository and installed on the Delphi XE toolbar before building the application. See the SESComponentsFMX repository for details.
 
 To build and run the application:
 
