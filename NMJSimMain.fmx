@@ -4,7 +4,7 @@ object MainFrm: TMainFrm
   Caption = 
     'NMJSim V2.0.0 : Neuromuscular Junction Simulation (c) J. Dempste' +
     'r, University of Strathclyde (2026) '
-  ClientHeight = 759
+  ClientHeight = 744
   ClientWidth = 1180
   StyleBook = StyleBook1
   FormFactor.Width = 320
@@ -19,25 +19,25 @@ object MainFrm: TMainFrm
     Position.X = 297.000000000000000000
     Position.Y = 46.000000000000000000
     Size.Width = 867.000000000000000000
-    Size.Height = 697.000000000000000000
+    Size.Height = 682.000000000000000000
     Size.PlatformDefault = False
     Text = 'Chart '
     TabOrder = 0
     object V: TTabControl
       Anchors = [akLeft, akTop, akRight, akBottom]
-      Position.X = 26.000000000000000000
-      Position.Y = 45.000000000000000000
+      Position.X = 8.000000000000000000
+      Position.Y = 26.000000000000000000
       Size.Width = 841.000000000000000000
-      Size.Height = 656.000000000000000000
+      Size.Height = 641.000000000000000000
       Size.PlatformDefault = False
       TabIndex = 0
       TabOrder = 1
       TabPosition = PlatformDefault
       Sizes = (
         841s
-        629s
+        614s
         841s
-        629s)
+        614s)
       object ChartTab: TTabItem
         CustomIcon = <
           item
@@ -58,7 +58,7 @@ object MainFrm: TMainFrm
           Position.X = 81.000000000000000000
           Position.Y = 25.000000000000000000
           Size.Width = 721.000000000000000000
-          Size.Height = 528.000000000000000000
+          Size.Height = 513.000000000000000000
           Size.PlatformDefault = False
           OnMouseUp = scDisplayMouseUp
           CursorChangeInProgress = False
@@ -103,7 +103,7 @@ object MainFrm: TMainFrm
         object TDisplayPanel: TPanel
           Anchors = [akLeft, akRight]
           Position.X = 8.000000000000000000
-          Position.Y = 575.242675781250000000
+          Position.Y = 561.000000000000000000
           Size.Width = 825.000000000000000000
           Size.Height = 44.000000000000000000
           Size.PlatformDefault = False
@@ -11215,9 +11215,9 @@ object MainFrm: TMainFrm
   end
   object ControlsGrp: TGroupBox
     Anchors = [akLeft, akTop, akBottom]
-    Position.Y = 57.000000000000000000
+    Position.Y = 46.000000000000000000
     Size.Width = 289.000000000000000000
-    Size.Height = 639.000000000000000000
+    Size.Height = 624.000000000000000000
     Size.PlatformDefault = False
     Text = ' Controls '
     TabOrder = 1
@@ -11431,7 +11431,7 @@ object MainFrm: TMainFrm
     object SaltSolutionPage: TTabControl
       Anchors = [akLeft, akTop, akRight]
       Position.X = 8.000000000000000000
-      Position.Y = 477.000000000000000000
+      Position.Y = 457.000000000000000000
       Size.Width = 265.000000000000000000
       Size.Height = 156.000000000000000000
       Size.PlatformDefault = False

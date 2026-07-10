@@ -1149,9 +1149,18 @@ procedure TMainFrm.mnCopyImageClick(Sender: TObject);
 // -----------------------------
 // Copy image to clipboard
 // -----------------------------
+var
+  ch: Integer;
+
 begin
+
     scDisplay.TCalBar := (scDisplay.XMax - scDisplay.XMin)*scDisplay.TScale*0.1 ;
+    for ch := 0 to scdisplay.NumChannels-1 do
+        begin
+        scDisplay.ChanCalBar[ch] := (scDisplay.YMax[ch] - scDisplay.YMin[ch])*scDisplay.ChanScale[ch]*0.1 ;
+        end;
     scDisplay.CopyImageToClipBoard ;
+
     end;
 
 
