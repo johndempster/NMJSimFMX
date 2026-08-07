@@ -2,15 +2,17 @@ object MainFrm: TMainFrm
   Left = 0
   Top = 0
   Caption = 
-    'NMJSim V2.0.0 : Neuromuscular Junction Simulation (c) J. Dempste' +
-    'r, University of Strathclyde (2026) '
+    'NMJSim V2.0.1 : Neuromuscular Junction Simulation (c) J. Dempste' +
+    'r, University of Strathclyde (07.08.26) '
   ClientHeight = 744
   ClientWidth = 1180
   StyleBook = StyleBook1
   FormFactor.Width = 320
   FormFactor.Height = 480
   FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
   OnCloseQuery = FormCloseQuery
+  OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   DesignerMasterStyle = 0
@@ -123,7 +125,7 @@ object MainFrm: TMainFrm
             Value = 1000.000000000000000000
             ValueScale = 1000.000000000000000000
             Units = 'ms'
-            NumberFormat = '%.4g'
+            NumberFormat = '%.5g'
             Min = 1000.000000000000000000
             Max = 1000000.000000000000000000
           end
@@ -242,15 +244,15 @@ object MainFrm: TMainFrm
             OnChange = ckINaChange
           end
         end
-        object ckIm: TCheckBox
+        object ckIAch: TCheckBox
           Position.X = 16.000000000000000000
           Position.Y = 44.000000000000000000
           Size.Width = 57.000000000000000000
           Size.Height = 25.000000000000000000
           Size.PlatformDefault = False
           TabOrder = 3
-          Text = 'Im'
-          OnChange = ckImChange
+          Text = 'IAch'
+          OnChange = ckIAchChange
         end
         object ckIK: TCheckBox
           Position.X = 16.000000000000000000
@@ -11271,9 +11273,9 @@ object MainFrm: TMainFrm
         StyleLookup = 'SESNumberBoxstyle'
         TabOrder = 8
         Hint = 'Add volume (<=1ml) of agonist '
-        Position.X = 121.000000000000000000
+        Position.X = 116.000000000000000000
         Position.Y = 108.000000000000000000
-        Size.Width = 126.000000000000000000
+        Size.Width = 100.000000000000000000
         Size.Height = 30.000000000000000000
         Size.PlatformDefault = False
         ShowHint = True
@@ -11292,7 +11294,7 @@ object MainFrm: TMainFrm
         Hint = 'Add volume (<=1ml) of agonist '
         Position.X = 8.000000000000000000
         Position.Y = 108.000000000000000000
-        Size.Width = 105.000000000000000000
+        Size.Width = 100.000000000000000000
         Size.Height = 30.000000000000000000
         Size.PlatformDefault = False
         ShowHint = True
@@ -11314,7 +11316,7 @@ object MainFrm: TMainFrm
         TabOrder = 4
       end
       object lbStimDuration: TLabel
-        Position.X = 121.000000000000000000
+        Position.X = 116.000000000000000000
         Position.Y = 88.000000000000000000
         Size.Width = 120.000000000000000000
         Size.Height = 17.000000000000000000
@@ -13370,13 +13372,13 @@ object MainFrm: TMainFrm
           64436F6C6F720708636C61426C61636B000000}
       end>
     Left = 32
-    Top = 704
+    Top = 688
   end
   object Timer: TTimer
     Interval = 50
     OnTimer = TimerTimer
     Left = 80
-    Top = 704
+    Top = 688
   end
   object MenuBar1: TMenuBar
     Size.Width = 1180.000000000000000000
@@ -13423,6 +13425,16 @@ object MainFrm: TMainFrm
         Text = 'Copy &Image'
         OnClick = mnCopyImageClick
       end
+      object mnSnapDisplay: TMenuItem
+        Locked = True
+        Text = '&Snap Display'
+        OnClick = mnSnapDisplayClick
+      end
+      object mnClearSnap: TMenuItem
+        Locked = True
+        Text = 'C&lear Snap'
+        OnClick = mnClearSnapClick
+      end
     end
     object mnHelp: TMenuItem
       Text = '&Help'
@@ -13439,11 +13451,11 @@ object MainFrm: TMainFrm
     end
   end
   object OpenDialog: TOpenDialog
-    Left = 120
-    Top = 704
+    Left = 128
+    Top = 688
   end
   object SaveDialog: TSaveDialog
     Left = 192
-    Top = 712
+    Top = 680
   end
 end

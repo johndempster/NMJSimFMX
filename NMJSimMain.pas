@@ -4,6 +4,10 @@ unit NMJSimMain;
 // (c) J. Dempster, University of Strathclyde 2026
 // -----------------------------------------------
 // 26.05.26 V2.0.0 FMX Multi-platform version
+// 30.07.26 V2.0.1 EPC decay shortened.
+// 07.08.26 V2.0.1 Access violation errors fixed
+//                 Multiple traces can be superimposed using Edit > Snap Display
+//                 Endplate channel current (IAch) trace replaces membreaen current (Im)
 
 interface
 
@@ -16,7 +20,7 @@ uses
   FMX.Menus, FMX.Platform, NMJSimModel, FMX.Layouts, System.Actions, FMX.ActnList ;
 
 const
-    MaxPoints = 1000000 ;
+    MaxPoints = 10000000 ;
     MaxChannels = 4 ;
     MaxDisplayPoints = 2000 ;
     MaxMarkers = 500 ;
@@ -28,7 +32,8 @@ const
     MinADCValue = -32768 ;
     NoiseStDev = 10 ;
     MaxVm = 150.0 ;               // Upper limit of voltage display channel (mV)
-    MaxIm = 150 ;                 // Upper limit of current display channel (nA)
+    MaxIm = 100 ;                 // Upper limit of current display channel (nA)
+    MaxIAch = 100 ;
     BackgroundNoiseStDev = 0.1 ;  // Background noise (gms)
     ScaleVtomV = 1E3 ;
     ScaleIToNa = 1E9 ;
@@ -37,6 +42,9 @@ const
 
 
 type
+
+  TADC = Array[0..MaxPoints*MaxChannels-1] of SmallInt ;
+  pADC = ^TADC ;
 
   TMainFrm = class(TForm)
     DisplayGrp: TGroupBox;
@@ -92,10 +100,12 @@ type
     bSetIonConcentrations: TButton;
     ckVm: TCheckBox;
     ckINa: TCheckBox;
-    ckIm: TCheckBox;
+    ckIAch: TCheckBox;
     ckIK: TCheckBox;
     bStimulateMuscle: TButton;
     cbConcentration: TComboBox;
+    mnSnapDisplay: TMenuItem;
+    mnClearSnap: TMenuItem;
     procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure bNewExperimentClick(Sender: TObject);
@@ -128,16 +138,20 @@ type
     procedure bRemoveDrugsClick(Sender: TObject);
     procedure bSetIonConcentrationsClick(Sender: TObject);
     procedure ckVmChange(Sender: TObject);
-    procedure ckImChange(Sender: TObject);
+    procedure ckIAchChange(Sender: TObject);
     procedure ckINaChange(Sender: TObject);
     procedure ckIKChange(Sender: TObject);
     procedure bStimulateMuscleClick(Sender: TObject);
     procedure cbDrugChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure mnSnapDisplayClick(Sender: TObject);
+    procedure mnClearSnapClick(Sender: TObject);
 
   private
     { Private declarations }
 
-    ADC : Array[0..MaxPoints*MaxChannels-1] of SmallInt ;
+    ADC : PADC ;
     NumPointsInBuf : Integer ;   // No. of data points in buffer
     StartPoint : Integer ;
     NumPointsDisplayed : Integer ;
@@ -164,6 +178,7 @@ type
     procedure SaveToFile( FileName : String ) ;
     procedure StopSimulation ;
     procedure UpdateDisplayWindow ;
+    procedure SnapDisplayWindow ;
 
    procedure SetDrugConcentrationList(
              iDrug : NativeInt ;              // Drug selected
@@ -255,6 +270,24 @@ begin
 end;
 
 
+procedure TMainFrm.FormCreate(Sender: TObject);
+// ------------------------------------
+// Initialisations when form is created
+// ------------------------------------
+begin
+    ADC := AllocMem( SizeOf(TADC) ) ;
+end;
+
+
+procedure TMainFrm.FormDestroy(Sender: TObject);
+// ------------------------------
+// Tidy up when form is destroyed
+// ------------------------------
+begin
+    FreeMem( ADC ) ;
+end;
+
+
 procedure TMainFrm.FormKeyDown(Sender: TObject; var Key: Word;
   var KeyChar: Char; Shift: TShiftState);
 // ----------------------------
@@ -320,14 +353,14 @@ begin
      ch := 1 ;
      scDisplay.ChanOffsets[ch] := ch ;
      scDisplay.ChanUnits[ch] := 'nA' ;
-     scDisplay.ChanName[ch] := 'Im' ;
-     scDisplay.ChanScale[ch] := (MaxIm) / MaxADCValue ;
+     scDisplay.ChanName[ch] := 'I.Ach' ;
+     scDisplay.ChanScale[ch] := (MaxIAch) / MaxADCValue ;
      scDisplay.yMin[ch] := 0.75*MinADCValue ;
      scDisplay.yMax[ch] := 0.75*MaxADCValue ;
      scDisplay.ChanVisible[ch] := False ;
      scDisplay.ChanNumSignals[ch] := 1 ;
-     ckIm.Tag := ch ;
-     ckIm.IsChecked := scDisplay.ChanVisible[ch] ;
+     ckIAch.Tag := ch ;
+     ckIACH.IsChecked := scDisplay.ChanVisible[ch] ;
 
      { Na current channel }
      ch := 2 ;
@@ -381,11 +414,14 @@ begin
      scDisplay.TScale := Model.dt*ScaleStoMs ;
      scDisplay.MaxPoints := Round( 100.0/scDisplay.TScale ) ;
 
-     edStartAt.Units := scDisplay.TUnits ;
+
      edDisplayWindow.Units := scDisplay.TUnits ;
      edDisplayWindow.ValueScale := scDisplay.TScale ;
      edStartAt.ValueScale := scDisplay.TScale ;
      edDisplayWindow.Value := scDisplay.MaxPoints ;
+
+     edStartAt.Units := 's' ;
+     edStartAt.ValueScale := Model.dt ;
      UpdateDisplayWindow ;
 
      // Load experiment if file name in parameter string
@@ -584,14 +620,23 @@ var
 begin
 
     // Add latest model variables to display channels
-    i := NumPointsInBuf*scDisplay.NumChannels ;
-    ADC[i + ckVm.Tag] := Round( (Model.Vm*ScaleVTomV)/scDisplay.ChanScale[ckVm.Tag] ) ;
-    ADC[i + ckINa.Tag] := Round( (Model.Na.I*ScaleITonA)/scDisplay.ChanScale[ckINa.Tag] ) ;
-    ADC[i + ckIK.Tag] := Round( (Model.K.I*ScaleITonA)/scDisplay.ChanScale[ckIK.Tag] ) ;
-    ADC[i + ckIm.Tag] :=  Round( (Model.Im*ScaleITonA)/scDisplay.ChanScale[ckIm.Tag] ) ;
+    if NumPointsInBuf < MaxPoints then
+       begin
 
-    Inc(NumPointsDisplayed) ;
-    Inc(NumPointsInBuf) ;
+       i := NumPointsInBuf*MaxChannels ;
+       ADC[i + ckVm.Tag] := Round( (Model.Vm*ScaleVTomV)/scDisplay.ChanScale[ckVm.Tag] ) ;
+       ADC[i + ckINa.Tag] := Round( (Model.Na.I*ScaleITonA)/scDisplay.ChanScale[ckINa.Tag] ) ;
+       ADC[i + ckIK.Tag] := Round( (Model.K.I*ScaleITonA)/scDisplay.ChanScale[ckIK.Tag] ) ;
+       ADC[i + ckIAch.Tag] :=  Round( ((Model.EPC.I + Model.MEPC.I + Model.AchR.I)*ScaleITonA)/scDisplay.ChanScale[ckIAch.Tag] ) ;
+
+       Inc(NumPointsDisplayed) ;
+       Inc(NumPointsInBuf) ;
+
+       end
+    else
+       begin
+       StopSimulation ;
+       end;
 
     end ;
 
@@ -653,12 +698,12 @@ begin
 end;
 
 
-procedure TMainFrm.ckImChange(Sender: TObject);
+procedure TMainFrm.ckIAchChange(Sender: TObject);
 // -------------------------
 // Im channel display on/off
 // --------------------------
 begin
-    scDisplay.ChanVisible[ckIm.Tag] := ckIm.Ischecked ;
+    scDisplay.ChanVisible[ckIAch.Tag] := ckIAch.Ischecked ;
     scDisplay.Repaint ;
 end;
 
@@ -756,7 +801,6 @@ begin
         if scDisplay.XOffset <> Round(sbDisplay.Value) then
            begin
            scDisplay.XOffset := Round(sbDisplay.Value);
-           edStartAt.ValueScale := scDisplay.TScale ;
            edStartAt.Value := scDisplay.XOffset ;
            scDisplay.SetDataBuf( @ADC[Round(sbDisplay.Value)*scDisplay.NumChannels] ) ;
            scDisplay.NumPoints := Min( scDisplay.MaxPoints, NumPointsInBuf - Round(sbDisplay.Value) ) ;
@@ -895,6 +939,17 @@ procedure TMainFrm.bStopClick(Sender: TObject);
 // Stop simulation
 // ----------------
 begin
+
+     StopSimulation ;
+
+     end;
+
+
+procedure TMainFrm.StopSimulation ;
+// ----------------
+// Stop simulation
+// ----------------
+begin
      bRecord.Enabled := True ;
      bStop.Enabled := False ;
      sbDisplay.Enabled := True ;
@@ -902,7 +957,6 @@ begin
      bStimulateNerve.Enabled := False ;
      bStimulateMuscle.Enabled := False ;
      UpdateDisplayWindow ;
-
      end;
 
 
@@ -926,20 +980,58 @@ begin
 end;
 
 
-procedure TMainFrm.StopSimulation ;
-// ----------------
-// Stop simulation
-// ----------------
+procedure TMainFrm.mnSnapDisplayClick(Sender: TObject);
+// ------------------------------------
+// Take a snap shot of displayed traces
+// ------------------------------------
 begin
-     bRecord.Enabled := True ;
-     bStop.Enabled := False ;
-     sbDisplay.Enabled := True ;
-     bNewExperiment.Enabled := True ;
-     bStimulateNerve.Enabled := False ;
-     bStimulateMuscle.Enabled := False ;
+
+    SnapDisplayWindow ;
+
+end;
 
 
-     end;
+procedure TMainFrm.SnapDisplayWindow ;
+// ------------------------------------------------------
+// Snap and store a copy of the displayed trace on screen
+// ------------------------------------------------------
+var
+    i,j,ch,iLine : Integer ;
+    x,y : single ;
+begin
+
+    for ch := 0 to scDisplay.NumChannels-1 do
+        begin
+
+        iLine := scDisplay.CreateLine( ch, TAlphaColors.Red, TStrokeDash.Solid, 1 ) ;
+        j := Round(sbDisplay.Value)*scDisplay.NumChannels + ch ;
+        x := 0.0 ;
+        for i := 0 to scDisplay.NumPoints-1 do
+          begin
+          y := ADC[j] ;
+          scDisplay.AddPointToLine( iLine, x,y) ;
+          j := j + scDisplay.NumChannels ;
+          x := x + 1.0 ;
+          end;
+
+        end;
+
+    scDisplay.Repaint ;
+
+    end;
+
+
+procedure TMainFrm.mnClearSnapClick(Sender: TObject);
+// ----------------------------
+// Clear snapped display traces
+// ----------------------------
+begin
+
+     scDisplay.ClearLines ;
+     scDisplay.Repaint ;
+
+end;
+
 
 
 procedure TMainFrm.bNewExperimentClick(Sender: TObject);
@@ -1030,10 +1122,11 @@ begin
      FileSeek( FileHandle, 0, 0 ) ;
      FileWrite( FileHandle, AnsiHeaderBuf, Length(Header.Text)) ;
 
-     // Write chart data
-
+     // Write header
      FileSeek( FileHandle, FileHeaderSize, 0 ) ;
-     FileWrite( FileHandle, ADC, NumPointsInBuf*scDisplay.NumChannels*SizeOf(SmallInt) ) ;
+     // Write chart data
+     FileWrite( FileHandle, ADC^, NumPointsInBuf*MaxChannels*SizeOf(SmallInt) ) ;
+
      // Close file
      FileClose( FileHandle ) ;
 
@@ -1074,7 +1167,7 @@ var
    AnsiHeaderBuf : Array[0..FileHeaderSize] of ANSIChar ;
    AnsiHeader : ANSIString ;
    Header : TStringList ;
-   i : Integer ;
+   i,NumBytes : Integer ;
    FileHandle : THandle ;
    NumMarkers : Integer ;
    MarkerPoint : Integer ;
@@ -1116,7 +1209,9 @@ begin
      if NumPointsInBuf > 0 then
         begin
         FileSeek( FileHandle, FileHeaderSize,0 ) ;
-        FileRead( FileHandle, ADC, NumPointsInBuf*scDisplay.NumChannels*SizeOf(SmallInt) ) ;
+        NumBytes := Min( NumPointsInBuf*MaxChannels*SizeOf(SmallInt), SizeOf(TADC)) ;
+        NumPointsInBuf := NumBytes div (MaxChannels*SizeOf(SmallInt)) ;
+        FileRead( FileHandle, ADC^, NumBytes ) ;
         end ;
 
      // Close data file

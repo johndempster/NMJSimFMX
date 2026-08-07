@@ -3,6 +3,8 @@ unit NMJSimModel;
 // Neuromuscular junction electrophysiology simulation
 // ===================================================
 // 29.05.26
+// 30.07.26 EPC/MEPC decay time constant shortened to 1ms.
+// 01.08.26 Randomly released MEPCs can now summate. Significant amounts of summation at [K]=10mM
 
 interface
 
@@ -479,7 +481,7 @@ begin
           epc.QSD := epc.QSize*0.05 ;
 
           // Normal endplate channel closing rate
-          ClosingRate := 1.0/1.5E-3 ;
+          ClosingRate := 1.0/1.0E-3 ;
           // Inhibition of cholinesterase decreases closing rate (max. factor of 4 }
           // Inhibition of K channels prolongs duration of transmitter release from nerve terminal
           // modelled here by an effective change in closing rate
@@ -526,14 +528,15 @@ begin
 //    Spontaneous miniature endplate currents
 //    ---------------------------------------
 
-      // MEPCs are released randomly with rate proportional to nerve resting potential(approximated by normal K.VRev) and Ca concentration
+//    MEPCs are released randomly with rate proportional to nerve resting potential(approximated by normal K.VRev) and Ca concentration
 //    KVRevNormal := rtf * ln( K.NormalCout / K.Cin ) ;
-      MEPCAverageRate := (500.0*Ca.COut)/ ( 1.0 + exp( -(K.VRev - (-0.05))/0.01)) ;
-      if (not MEPC.Active) and (Random() <= (dt*MEPCAverageRate)) then
+      MEPCAverageRate := (500.0*Ca.COut)/ ( 1.0 + exp( -(K.VRev - (-0.055))/0.01)) ;
+      if Random() <= (dt*MEPCAverageRate) then
          begin
           MEPC.QSize := 1.5E-8*( 1.0 + 0.2*(1.0-AchE_Available) )*GAchR_Available ;
+          MEPC.QSize := MEPC.QSize + MEPC.G ;
           MEPC.QSD := MEPC.QSize*0.05 ;
-          ClosingRate := 1.0/1.5E-3 ;
+          ClosingRate := 1.0/1.0E-3 ;
           ClosingRate := ClosingRate / ( 1.0 + 3.0*(1.0-AchE_AVailable) ) ;
           MEPC.TauOpen := 1E-4 ;
           MEPC.TauClose := 1.0 /ClosingRate ;
