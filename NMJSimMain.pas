@@ -753,15 +753,17 @@ begin
 //      Simulation running
 //      ==================
 
-        for i := 0 to (scDisplay.MaxPoints div 200) do
-          begin
+        i := 0 ;
+        repeat
           Model.UpdateIonConcentrations ;
           Model.UpdateDrugConcentrations ;
           Model.DoSimulation ;
           UpdateDisplay ;
-          end;
+          Inc(i) ;
+          if (NumPointsDisplayed >= scDisplay.MaxPoints) then ChangeDisplayWindow := True ;
+        until (i >= (scDisplay.MaxPoints div 200)) or ChangeDisplayWindow ;
 
-       if (NumPointsDisplayed >= scDisplay.MaxPoints) then ChangeDisplayWindow := True ;
+
        if ChangeDisplayWindow then
           begin
           StartPoints := scDisplay.MaxPoints div 10 ;

@@ -2,8 +2,8 @@ object MainFrm: TMainFrm
   Left = 0
   Top = 0
   Caption = 
-    'NMJSim V2.0.1 : Neuromuscular Junction Simulation (c) J. Dempste' +
-    'r, University of Strathclyde (07.08.26) '
+    'NMJSim V2.0.2 : Neuromuscular Junction Simulation (c) J. Dempste' +
+    'r, University of Strathclyde (06.09.26) '
   ClientHeight = 744
   ClientWidth = 1180
   StyleBook = StyleBook1
@@ -116,11 +116,13 @@ object MainFrm: TMainFrm
             Anchors = [akTop, akRight]
             TabOrder = 0
             OnKeyUp = edDisplayWindowKeyUp
+            Hint = 'Duration of displayed region of chart recording'
             Position.X = 692.000000000000000000
             Position.Y = 8.000000000000000000
             Size.Width = 84.000000000000000000
             Size.Height = 25.000000000000000000
             Size.PlatformDefault = False
+            ShowHint = True
             Text = ' 1E006 ms'
             Value = 1000.000000000000000000
             ValueScale = 1000.000000000000000000
@@ -133,11 +135,13 @@ object MainFrm: TMainFrm
             Touch.InteractiveGestures = [LongTap, DoubleTap]
             TabOrder = 1
             OnKeyUp = edStartAtKeyUp
+            Hint = 'Start of displayed region of chart recording'
             Position.X = 240.000000000000000000
             Position.Y = 8.000000000000000000
             Size.Width = 100.000000000000000000
             Size.Height = 25.000000000000000000
             Size.PlatformDefault = False
+            ShowHint = True
             Text = ' 0 ms'
             ValueScale = 1000.000000000000000000
             Units = 'ms'
@@ -147,6 +151,7 @@ object MainFrm: TMainFrm
           end
           object sbDisplay: TScrollBar
             Anchors = [akLeft, akTop, akRight]
+            Hint = 'Select displayed region of chart recording'
             SmallChange = 0.000000000000000000
             Orientation = Horizontal
             Position.X = 344.000000000000000000
@@ -155,6 +160,8 @@ object MainFrm: TMainFrm
             Size.Height = 25.000000000000000000
             Size.PlatformDefault = False
             TabOrder = 4
+            ParentShowHint = False
+            ShowHint = True
             OnChange = sbDisplayChange
           end
           object bDisplayWindowDouble: TButton
@@ -203,6 +210,7 @@ object MainFrm: TMainFrm
             Text = 'Start Time'
           end
           object bRecord: TButton
+            Hint = 'Start Recording'
             Position.X = 8.000000000000000000
             Position.Y = 8.000000000000000000
             Size.Width = 73.000000000000000000
@@ -211,6 +219,8 @@ object MainFrm: TMainFrm
             TabOrder = 3
             Text = 'Record'
             TextSettings.Trimming = None
+            ParentShowHint = False
+            ShowHint = True
             OnClick = bRecordClick
           end
           object bStop: TButton
@@ -11233,6 +11243,9 @@ object MainFrm: TMainFrm
       TabOrder = 1
       object bNewExperiment: TButton
         Anchors = [akLeft, akTop, akRight]
+        Hint = 
+          'Start another experiment with new neuromuscular junction prepara' +
+          'tion'
         Position.X = 8.000000000000000000
         Position.Y = 8.000000000000000000
         RepeatClick = True
@@ -11242,6 +11255,8 @@ object MainFrm: TMainFrm
         TabOrder = 1
         Text = 'New Experiment'
         TextSettings.Trimming = None
+        ParentShowHint = False
+        ShowHint = True
         OnClick = bNewExperimentClick
       end
     end
@@ -11272,7 +11287,7 @@ object MainFrm: TMainFrm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'SESNumberBoxstyle'
         TabOrder = 8
-        Hint = 'Add volume (<=1ml) of agonist '
+        Hint = 'Duration of stimulus pulse'
         Position.X = 116.000000000000000000
         Position.Y = 108.000000000000000000
         Size.Width = 100.000000000000000000
@@ -11291,7 +11306,7 @@ object MainFrm: TMainFrm
         Touch.InteractiveGestures = [LongTap, DoubleTap]
         StyleLookup = 'SESNumberBoxstyle'
         TabOrder = 7
-        Hint = 'Add volume (<=1ml) of agonist '
+        Hint = 'Amplitude of stimulus pulse'
         Position.X = 8.000000000000000000
         Position.Y = 108.000000000000000000
         Size.Width = 100.000000000000000000
@@ -11390,7 +11405,7 @@ object MainFrm: TMainFrm
           TabOrder = 1
         end
         object bAddDrug: TButton
-          Hint = 'Add to bath'
+          Hint = 'Add drug to bath'
           Position.X = 16.000000000000000000
           Position.Y = 92.000000000000000000
           Size.Width = 233.000000000000000000
@@ -11458,7 +11473,7 @@ object MainFrm: TMainFrm
         ExplicitSize.cx = 61.000000000000000000
         ExplicitSize.cy = 26.000000000000000000
         object bSetIonConcentrations: TButton
-          Hint = 'Change bathing solution to low calcium salt solution'
+          Hint = 'Change ion concentratons in bathing solution'
           Position.X = 16.000000000000000000
           Position.Y = 8.000000000000000000
           Size.Width = 233.000000000000000000
