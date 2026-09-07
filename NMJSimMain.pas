@@ -778,7 +778,6 @@ begin
           AddChartAnnotations ;
           scDisplay.Repaint ;
           ChangeDisplayWindow := False ;
-          outputdebugstring(pchar('display clear'));
           end
        else
           begin

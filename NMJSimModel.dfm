@@ -1,4 +1,5 @@
 object Model: TModel
-  Height = 480
-  Width = 640
+  Height = 600
+  Width = 800
+  PixelsPerInch = 120
 end

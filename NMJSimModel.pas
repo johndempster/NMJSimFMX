@@ -9,7 +9,7 @@ unit NMJSimModel;
 interface
 
 uses
-  System.SysUtils, System.Classes, math, windows ;
+  System.SysUtils, System.Classes, math{, windows} ;
 
 const
     MaxDrugs = 100 ;
